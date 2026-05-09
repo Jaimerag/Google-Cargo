@@ -18,6 +18,13 @@ app.use(cors({
 app.use(express.json());
 app.use('/api', apiRouter);
 
+// Servir el frontend compilado en producción
+if (process.env.NODE_ENV === 'production') {
+  const distPath = resolve(__dirname, '../frontend/dist');
+  app.use(express.static(distPath));
+  app.get('*', (_req, res) => res.sendFile(resolve(distPath, 'index.html')));
+}
+
 app.use((err, _req, res, _next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Error interno del servidor', message: err.message });
